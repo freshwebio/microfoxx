@@ -1,7 +1,7 @@
 'use strict';
 
 // Define an object prototype for our own cursor objects retrieved from the cursor collection.
-function JCursor(cursorData) {
+function MicrofoxxCursor(cursorData) {
 
   // Simply take a copy of the provided cursor data
   // to maintain the current position and the result set.
@@ -27,5 +27,5 @@ function JCursor(cursorData) {
   };
 }
 
-// Now export our JCursor "class" to be used elsewhere in the service.
-exports = JCursor;
+// Now export our MicrofoxxCursor "class" to be used elsewhere in the service.
+exports = MicrofoxxCursor;

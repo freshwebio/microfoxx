@@ -35,11 +35,11 @@ db._collection(users).ensureIndex({
 });
 
 // First of all ensure our user doesn't already exist.
-if (db._collection(users).firstExample({username: env.JF_DB_USERNAME}) === null) {
+if (db._collection(users).firstExample({username: env.MF_DB_USERNAME}) === null) {
   // Create our single user for the service from the environment variables.
   const user = {
-    username: env.JF_DB_USERNAME,
-    password: env.JF_DB_PASSWORD
+    username: env.MF_DB_USERNAME,
+    password: env.MF_DB_PASSWORD
   };
 
   // Create an authentication hash for the user.
@@ -58,11 +58,11 @@ if (db._collection(users).firstExample({username: env.JF_DB_USERNAME}) === null)
 // we need to make sure we free up storage space as soon as possible as cursors could easily
 // fill up the available space.
 // Give the queue 3 workers.
-var queue = queues.create('juntos-queue');
+var queue = queues.create('microfoxx-queue');
 // Create our cursor cleanup job that runs every five seconds to check if there are any cursors that are
 // more than 30 seconds old.
 queue.push(
-  {mount: '/juntos', name: 'cleanup-cursors'},
+  {mount: '/microfoxx', name: 'cleanup-cursors'},
   {},
   {
     repeatTimes: Infinity,

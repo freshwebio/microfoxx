@@ -62,7 +62,7 @@ if [ "$1" = 'arangod' ]; then
 		    ARANGO_UP=1
         # Now deal with creating our app's database from the environment variable
         # in the case it doesn't already exist while at the same time determining whether a connection can be made or not.
-        arangosh --server.endpoint=unix:///tmp/arangodb-tmp.sock --javascript.execute-string "db._createDatabase('juntosfoxx');" || ARANGO_UP=0
+        arangosh --server.endpoint=unix:///tmp/arangodb-tmp.sock --javascript.execute-string "db._createDatabase('microfoxx');" || ARANGO_UP=0
 		done
 
 		for f in /docker-entrypoint-initdb.d/*; do

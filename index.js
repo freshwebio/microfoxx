@@ -14,7 +14,7 @@ module.context.use(sessions);
 
 const createAuth = require('@arangodb/foxx/auth');
 const createRouter = require('@arangodb/foxx/router');
-const JCursor = require('./utility/jcursor');
+const MicrofoxxCursor = require('./utility/microfoxxcursor');
 
 const router = createRouter();
 const auth = createAuth();
@@ -94,7 +94,7 @@ router.post('/logout', function(req, res) {
 // is not an accepted path parameter.
 // The downside to doing it this way is that no other collections can contain the name of
 // the events collection.
-var collre = new RegExp('^(?!.*juntos_dbevent).*$','i');
+var collre = new RegExp('^(?!.*microfoxx_dbevent).*$','i');
 
 /**
  * Deals with creating a new document in the provided collection
@@ -110,7 +110,7 @@ router.post('/:coll', function(req, res) {
       try {
         const respData = db._executeTransaction({
           collections: {
-            write: [req.pathParams.coll, 'juntos_dbevent']
+            write: [req.pathParams.coll, 'microfoxx_dbevent']
           },
           action: function () {
             var item = coll.save(req.body);
@@ -317,7 +317,7 @@ router.put('/:coll/:key', function(req, res) {
       try {
         const respData = db._executeTransaction({
           collections: {
-            write: [req.pathParams.coll, 'juntos_dbevent']
+            write: [req.pathParams.coll, 'microfoxx_dbevent']
           },
           action: function () {
             var item = coll.update(req.pathParams.key, req.body);
@@ -357,7 +357,7 @@ router.delete('/:coll/:key', function(req, res) {
       try {
         const respData = db._executeTransaction({
           collections: {
-            write: [req.pathParams.coll, 'juntos_dbevent']
+            write: [req.pathParams.coll, 'microfoxx_dbevent']
           },
           action: function () {
             var result = coll.remove(req.pathParams.key, {returnOld: true});
@@ -447,23 +447,23 @@ router.post('/cursor', function(req, res) {
 router.put('/cursor/:cid', function(req, res) {
     var cursor = cursors.document(req.pathParams.cid);
     const batchSize = cursor._batchSize;
-    var jcursor = new JCursor(cursor);
+    var mfCursor = new MicrofoxxCursor(cursor);
     var batch = [];
     var i = cursor._current;
     var limit = cursor._current + batchSize;
-    while (jcursor.hasNext() && i < limit) {
-      batch.push(jcursor.next());
+    while (mfCursor.hasNext() && i < limit) {
+      batch.push(mfCursor.next());
       i++;
     }
     // In the case we have reached the end remove the cursor from the collection
     // and let the client know there are no more items left to consume.
-    if (!jcursor.hasNext()) {
+    if (!mfCursor.hasNext()) {
       // Remove our cursor from the collection.
       cursors.remove(cursor._key);
       res.send({results: batch, hasMore: false});
     } else {
       // Update our cursor to the new state (updated current position in the result set).
-      cursors.update(jcursor.cursorData._key, jcursor.cursorData);
+      cursors.update(mfCursor.cursorData._key, mfCursor.cursorData);
       res.send({results: batch, hasMore: true});
     }
   })
@@ -493,7 +493,7 @@ router.post('/insert', function(req, res) {
       try {
         const respData = db._executeTransaction({
           collections: {
-            write: [req.body.writeCollection, 'juntos_dbevent'],
+            write: [req.body.writeCollection, 'microfoxx_dbevent'],
             read: req.body.readCollections
           },
           action: function () {
@@ -560,7 +560,7 @@ router.post('/update', function(req, res) {
       try {
         const respData = db._executeTransaction({
           collections: {
-            write: [req.body.writeCollection, 'juntos_dbevent'],
+            write: [req.body.writeCollection, 'microfoxx_dbevent'],
             read: req.body.readCollections
           },
           action: function () {
@@ -628,7 +628,7 @@ router.post('/remove', function(req, res) {
       try {
         const respData = db._executeTransaction({
           collections: {
-            write: [req.body.writeCollection, 'juntos_dbevent'],
+            write: [req.body.writeCollection, 'microfoxx_dbevent'],
             read: req.body.readCollections
           },
           action: function () {
